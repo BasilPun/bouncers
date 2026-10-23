@@ -37,6 +37,8 @@ public:
     bn::fixed x_speed;
     bn::fixed y_speed;
     bn::fixed scale = 1;
+    bn::fixed x;
+    bn::fixed y;
 
     Bouncer(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::boostingbird.create_sprite(x_start, y_start)),
                                                     x_speed(random.get_unbiased_fixed(-BASE_SPEED, BASE_SPEED)),
@@ -46,8 +48,8 @@ public:
 
     void update()
     {
-        bn::fixed x = sprite.x();
-        bn::fixed y = sprite.y();
+        x = sprite.x();
+        y = sprite.y();
 
         // Update x position by adding speed
         x += x_speed;
@@ -111,13 +113,13 @@ public:
     }
 };
 
-bn::fixed average_x(bn::vector<bn::sprite_ptr, MAX_BOUNCERS> &sprites)
+bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &sprites)
 {
     // Add all x positions together
     bn::fixed x_sum = 0;
-    for (bn::sprite_ptr sprite : sprites)
+    for (Bouncer sprite : sprites)
     {
-        x_sum += sprite.x();
+        x_sum += sprite.x;
     }
 
     bn::fixed x_average = x_sum;
@@ -158,12 +160,13 @@ int main()
             add_bouncer(bouncers);
         }
 
-        // // if B is pressed print the average to the console
-        // if (bn::keypad::b_pressed())
-        // {
-        //     bn::fixed x_average = average_x(sprites);
-        //     BN_LOG("AVERAGE X: ", x_average);
-        // }
+        // if B is pressed print the average to the console
+        if (bn::keypad::b_pressed())
+        {
+            bn::fixed x_average = average_x(bouncers);
+            BN_LOG("AVERAGE X: ", x_average);
+        }
+
         for (Bouncer &b : bouncers)
         {
             b.update();
